@@ -75,8 +75,8 @@ def fetchExams(wordId="43", examCategory="B", monthsForward=1, month=None):
                               month+relativedelta(months=1))
 
 
-T_CHATID = 000000
-T_TOKEN = 'sdfghjkl;lkjhgfdsdfghjk'
+T_CHATID = 
+T_TOKEN = 
 bot = telegram.Bot(token=T_TOKEN)
 
 
@@ -86,18 +86,21 @@ def notify(text):
 
 bestExam = None
 while(True):
-    exams = fetchExams(monthsForward=3)
-    ps = [p for p in exams if p.type == ExamType.PRACTICE]
-    ps.sort(key= lambda e: e.date)
-    e = ps[0]
-    if bestExam != e:
-        bestExam = e
-        if e.date < bestExam.date:
-            notify("NEW BEST EXAM: " + str(e))
-            print("NEW BEST EXAM: " + str(e))
-        else:
-            notify("CHUJ: " + str(e))
-            print("CHUJ: " + str(e))
+    try:
+        exams = fetchExams(monthsForward=3)
+        ps = [p for p in exams if p.type == ExamType.PRACTICE]
+        ps.sort(key= lambda e: e.date)
+        e = ps[0]
+        if bestExam != e:
+            bestExam = e
+            if e.date < bestExam.date:
+                notify("NEW BEST EXAM: " + str(e))
+                print("NEW BEST EXAM: " + str(e))
+            else:
+                notify("CHUJ: " + str(e))
+                print("CHUJ: " + str(e))
+    except Exception as e:
+        print(e)
     time.sleep(3*60)
 
 exams=fetchExams(month = datetime.now()+relativedelta(months=3))
