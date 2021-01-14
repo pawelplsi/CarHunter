@@ -6,6 +6,20 @@ from dateutil.relativedelta import relativedelta
 from enum import Enum
 import telegram
 import time
+import os
+
+from dotenv import load_dotenv
+load_dotenv(verbose=True)
+
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+WORD_ID = os.getenv("WORD_ID")
+
+bot = telegram.Bot(token=TELEGRAM_TOKEN)
+
+
+def notify(text):
+    bot.sendMessage(chat_id=TELEGRAM_CHAT_ID, text=text)
 
 
 class ExamType(Enum):
@@ -55,7 +69,8 @@ def fetchExams(wordId="43", examCategory="B", monthsForward=1, month=None):
 
     def makeExam(examType, category, wordId, examObject):
         return Exam(examType, category, wordId,
-                    datetime.strptime(examObject["date"], '%d.%m.%y %H:%M'), examObject["places"], examObject["amount"])
+                    datetime.strptime(examObject["date"], '%d.%m.%y %H:%M'),
+                    examObject["places"], examObject["amount"])
 
     data = json.loads(response.text)
     for term in data["terms"].values():
@@ -63,26 +78,16 @@ def fetchExams(wordId="43", examCategory="B", monthsForward=1, month=None):
             if "theory" in exam:
                 t = exam["theory"]
                 exams.append(makeExam(ExamType.THEORY,
-                                      examCategory, wordId, t))
+                                      examCategory, WORD_ID, t))
             if "practice" in exam:
                 practices = exam["practice"]
                 for p in practices:
                     exams.append(makeExam(ExamType.PRACTICE,
-                                          examCategory, wordId, p))
+                                          examCategory, WORD_ID, p))
     if monthsForward <= 1:
         return exams
-    return exams + fetchExams(wordId, examCategory, monthsForward-1,
+    return exams + fetchExams(WORD_ID, examCategory, monthsForward-1,
                               month+relativedelta(months=1))
-
-
-T_CHATID = 
-T_TOKEN = 
-bot = telegram.Bot(token=T_TOKEN)
-
-
-def notify(text):
-    bot.sendMessage(chat_id=T_CHATID, text=text)
-
 
 bestExam = None
 while(True):
@@ -101,6 +106,7 @@ while(True):
                 print("CHUJ: " + str(e))
     except Exception as e:
         print(e)
+        
     time.sleep(3*60)
 
 exams=fetchExams(month = datetime.now()+relativedelta(months=3))
