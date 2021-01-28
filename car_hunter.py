@@ -27,7 +27,7 @@ while True:
         exams_practical.sort(key=lambda exam: exam.date)
         exam = exams_practical[0]
         if bestExam != exam:
-            if exam.date < bestExam.date:
+            if bestExam is None or exam.date < bestExam.date:
                 notify("NEW BEST EXAM: " + str(exam))
                 print("NEW BEST EXAM: " + str(exam))
             else:
