@@ -27,19 +27,14 @@ while True:
         exams_practical.sort(key=lambda exam: exam.date)
         exam = exams_practical[0]
         if bestExam != exam:
-            bestExam = exam
             if exam.date < bestExam.date:
                 notify("NEW BEST EXAM: " + str(exam))
                 print("NEW BEST EXAM: " + str(exam))
             else:
                 notify("CHUJ: " + str(exam))
                 print("CHUJ: " + str(exam))
+            bestExam = exam
     except Exception as e:
         print(e)
 
     time.sleep(3 * 60)
-
-exams = fetch_exams(month=datetime.now() + relativedelta(months=3))
-
-for exam in exams:
-    print(exam.date)
