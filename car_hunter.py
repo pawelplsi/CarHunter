@@ -1,5 +1,6 @@
 import os
-import time
+import datetime
+import time as systime
 from wordapi import *
 
 import telegram
@@ -19,10 +20,12 @@ def notify(text):
     bot.sendMessage(chat_id=TELEGRAM_CHAT_ID, text=text)
 
 
+# fetch_exams(WORD_ID, EXAM_CATEGORY, datetime.now())
+# exit()
 bestExam = None
 while True:
     try:
-        exams = fetch_exams(WORD_ID, EXAM_CATEGORY, months_forward=3)
+        exams = fetch_exams(WORD_ID, EXAM_CATEGORY, datetime.now())
         exams_practical = [exam for exam in exams if exam.type == ExamType.PRACTICE]
         exams_practical.sort(key=lambda exam: exam.date)
         exam = exams_practical[0]
@@ -34,7 +37,9 @@ while True:
                 notify("CHUJ: " + str(exam))
                 print("CHUJ: " + str(exam))
             bestExam = exam
+        for P in exams_practical:
+            print (P)
     except Exception as e:
         print(e)
 
-    time.sleep(3 * 60)
+    systime.sleep(60)
